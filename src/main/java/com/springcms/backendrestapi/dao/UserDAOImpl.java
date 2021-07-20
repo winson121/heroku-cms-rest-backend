@@ -21,8 +21,7 @@ public class UserDAOImpl implements UserDAO {
 		Session currentSession =  entityManager.unwrap(Session.class);
 		
 		// create query to get the user
-		Query<User> query = currentSession.createQuery("select u from User u"
-				+ " JOIN FETCH u.roles where username=:username", User.class);
+		Query<User> query = currentSession.createQuery("from User u where u.username=:username", User.class);
 		query.setParameter("username", username);
 		
 		// check if username exist in db

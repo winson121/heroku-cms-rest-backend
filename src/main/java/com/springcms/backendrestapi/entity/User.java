@@ -1,5 +1,6 @@
 package com.springcms.backendrestapi.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
@@ -14,8 +15,14 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
 @Table(name="users")
+@JsonIdentityInfo(scope=User.class,
+		  generator = ObjectIdGenerators.PropertyGenerator.class, 
+		  property = "id")
 public class User {
 	
 	@Id
@@ -38,12 +45,22 @@ public class User {
 	@Column(name="email")
 	private String email;
 	
-	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinTable(name="users_roles",
 				joinColumns=@JoinColumn(name="user_id"),
 				inverseJoinColumns=@JoinColumn(name="role_id")
 			)
 	private Collection<Role> roles;
+	
+	@ManyToMany(fetch=FetchType.LAZY,
+			cascade= {CascadeType.DETACH,
+					CascadeType.MERGE,
+					CascadeType.PERSIST,
+					CascadeType.REFRESH})
+	@JoinTable(name="courses_users",
+			joinColumns=@JoinColumn(name="user_id"),
+			inverseJoinColumns=@JoinColumn(name="course_id"))
+	private Collection<Course> courses;
 	
 	public User() {}
 	
@@ -133,11 +150,29 @@ public class User {
 	public void setRoles(Collection<Role> roles) {
 		this.roles = roles;
 	}
+	
+	
+	public Collection<Course> getCourses() {
+		return courses;
+	}
+
+	public void setCourses(Collection<Course> courses) {
+		this.courses = courses;
+	}
 
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", firstName=" + firstName
 				+ ", lastName=" + lastName + ", email=" + email + ", roles=" + roles + "]";
+	}
+
+	public void addCourse(Course course) {
+		if(courses == null) {
+			courses = new ArrayList<>();
+		}
+		
+		courses.add(course);
+		
 	}
 	
 }
