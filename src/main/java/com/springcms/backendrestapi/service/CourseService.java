@@ -1,14 +1,14 @@
 package com.springcms.backendrestapi.service;
 
-import java.util.List;
+import java.util.Collection;
 
 import com.springcms.backendrestapi.entity.Course;
 
 public interface CourseService {
 
-	List<Course> getCoursesByUser(String username);
+	Collection<Course> getCoursesByUser(String username);
 
-	List<Course> getCourses();
+	Collection<Course> getCourses();
 
 	Course saveCourseByUser(String username, Course course);
 
@@ -17,5 +17,12 @@ public interface CourseService {
 	void updateCourseByUser(String username, Course course);
 
 	void deleteCourse(int courseId);
+
+	Collection<Course> getCoursesByPage(int pageId, int total);
+
+	Course saveCourseToUser(String username, int courseId);
+
+	Course removeCourseFromUser(String username, int courseId);
+
 
 }

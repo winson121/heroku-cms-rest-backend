@@ -1,8 +1,7 @@
 package com.springcms.backendrestapi.controller;
 
 import java.security.Principal;
-import java.util.List;
-import java.util.logging.Logger;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,14 +26,11 @@ public class CourseRestController {
 	@Autowired
 	private CourseService courseService;
 	
-	private Logger logger = Logger.getLogger(getClass().getName());
-	
 	@GetMapping("/courses/users")
-	public ResponseEntity<List<Course>> getCoursesByUser(Principal principal) {
+	public ResponseEntity<Collection<Course>> getCoursesByUser(Principal principal) {
 		
-		List<Course> userCourses = courseService.getCoursesByUser(principal.getName());
+		Collection<Course> userCourses = courseService.getCoursesByUser(principal.getName());
 		
-		logger.info("User courses is: " + userCourses);
 		
 		if (userCourses != null) {
 			return new ResponseEntity<>(userCourses, HttpStatus.OK);
@@ -44,8 +40,8 @@ public class CourseRestController {
 	}
 	
 	@GetMapping("/courses")
-	public ResponseEntity<List<Course>> getCourses() {
-		List<Course> courses = courseService.getCourses();
+	public ResponseEntity<Collection<Course>> getCourses() {
+		Collection<Course> courses = courseService.getCourses();
 		
 		return new ResponseEntity<>(courses, HttpStatus.OK);
 	}
@@ -54,7 +50,6 @@ public class CourseRestController {
 	public ResponseEntity<Course> saveCourseByUser(@RequestBody Course course, Principal principal) {
 		// just in case an id is pass in the JSON, we will set the id to 0
 		// this will force a save of new item instead of updating the course
-		logger.info("=======> POST course info: " + course);
 		if (course == null) {
 			return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 		}
@@ -96,5 +91,28 @@ public class CourseRestController {
 		courseService.deleteCourse(courseId);
 		
 		return new ResponseEntity<>("Deleted course id - " + courseId, HttpStatus.OK);
+	}
+	
+	@GetMapping("/courses/{pageId}/{total}")
+	public ResponseEntity<Collection<Course>> getCoursesByPage(@PathVariable int pageId, @PathVariable int total) {
+		Collection<Course> courses = courseService.getCoursesByPage(pageId, total);
+		
+		return new ResponseEntity<>(courses, HttpStatus.OK);
+	}
+	
+	@GetMapping("/courses/users/enroll/{courseId}")
+	public ResponseEntity<Course> saveCourseToUser(@PathVariable int courseId, Principal principal) {
+		// add course to current user
+		Course course = courseService.saveCourseToUser(principal.getName(), courseId);
+		
+		return new ResponseEntity<>(course, HttpStatus.OK);
+	}
+	
+	@GetMapping("/courses/users/unenroll/{courseId}")
+	public ResponseEntity<Course> removeCourseFromUser(@PathVariable int courseId, Principal principal) {
+		// remove course from current user
+		Course course = courseService.removeCourseFromUser(principal.getName(), courseId);
+		
+		return new ResponseEntity<>(course, HttpStatus.OK);
 	}
 }

@@ -1,7 +1,8 @@
 package com.springcms.backendrestapi.dao;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -20,7 +21,6 @@ public class CourseDAOImpl implements CourseDAO{
 	@Autowired
 	private EntityManager entityManager;
 	
-	private Logger logger = Logger.getLogger(getClass().getName());
 	@Override
 	public List<Course> getCoursesByUser(String username) {
 		// get current hibernate session
@@ -40,7 +40,7 @@ public class CourseDAOImpl implements CourseDAO{
 			// get users' courses if courses not null
 			User user = query.getSingleResult();
 			userCourses = (List<Course>) user.getCourses();
-			logger.info("getCoursesByUser userCourses :" + userCourses);
+			
 		} catch (NoResultException nre) {
 			// ignore if courses is empty
 		}
@@ -61,17 +61,29 @@ public class CourseDAOImpl implements CourseDAO{
 		
 		// set course's instructor to the current logged in teacher
 		course.setInstructor(user);
-		
+
 		// add course to user
 		user.addCourse(course);
-		// save course
-		currentSession.saveOrUpdate(course);
 		
 		return course;
 	}
+	
+	@Override
+	public void updateCourseByUser(String username, Course course) {
+		// get current hibernate session
+		Session currentSession = entityManager.unwrap(Session.class);
+		
+	    // get course from db
+		Course courseToUpdate = currentSession.get(Course.class, course.getId());
+		
+		// set course's attribute to the value that we want to update
+		courseToUpdate.setTitle(course.getTitle());
+		courseToUpdate.setDescription(course.getDescription());
+		
+	}
 
 	@Override
-	public List<Course> getCourses() {
+	public Collection<Course> getCourses() {
 		// get current hibernate session
 		Session currentSession = entityManager.unwrap(Session.class);
 		
@@ -79,9 +91,7 @@ public class CourseDAOImpl implements CourseDAO{
 		Query<Course> query = currentSession.createQuery("from Course", Course.class);
 		
 		// execute query and get results
-		List<Course> courses = query.getResultList();
-		
-		logger.info("result is: " + courses);
+		Collection<Course> courses = query.getResultList();
 
 		// return results
 		return courses;
@@ -111,6 +121,62 @@ public class CourseDAOImpl implements CourseDAO{
 		
 		query.executeUpdate();
 		
+	}
+
+	@Override
+	public Collection<Course> getCoursesByPage(int pageId, int total) {
+		// get current hibernate session
+		Session currentSession = entityManager.unwrap(Session.class);
+		
+		// create query to get courses with limit
+		Query<Course> query = currentSession.createQuery("from Course", Course.class).setFirstResult(pageId).setMaxResults(total);
+		
+		// execute query and get result list
+		Collection<Course> courses = new HashSet<>(query.getResultList());
+		
+		return courses;
+	}
+
+	@Override
+	public Course saveCourseToUser(String username, int courseId) {
+		// get current hibernate session
+		Session currentSession = entityManager.unwrap(Session.class);
+		
+		// create query to get user 
+		Query<User> userQuery = currentSession.createQuery("from User where username=:username", User.class);
+		userQuery.setParameter("username",  username);
+		
+		User user = userQuery.getSingleResult();
+		
+		// get course by its id
+		Course course = currentSession.get(Course.class, courseId);
+		
+		// add course to user and add user to course
+		user.addCourse(course);
+		course.addUser(user);
+		
+		return course;
+	}
+
+	@Override
+	public Course removeCourseFromUser(String username, int courseId) {
+		// get current hibernate session
+		Session currentSession = entityManager.unwrap(Session.class);
+		
+		//create query to get user
+		Query<User> query = currentSession.createQuery("from User where username=:username", User.class)
+							.setParameter("username", username);
+		
+		User user = query.getSingleResult();
+		
+		// get course by its id
+		Course course = currentSession.get(Course.class, courseId);
+		
+		// remove course from user and remove user from course
+		user.removeCourse(course);
+		course.removeUser(user);
+		
+		return course;
 	}
 
 

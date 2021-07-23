@@ -1,7 +1,7 @@
 package com.springcms.backendrestapi.entity;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -110,8 +110,32 @@ public class Course {
 
 	public void addUser(User user) {
 		if(users == null) {
-			users = new ArrayList<>();
+			users = new HashSet<>();
 		}
 		users.add(user);
+	}
+	
+	public void removeUser(User user) {
+		users.remove(user);
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		// if both object reference the same object return true
+		if(this == obj) return true;
+		
+		// check if arguments if of the type of the same class
+		if(obj == null || obj.getClass() != this.getClass()) return false;
+		
+		// if object is the type geek, check the state of object
+		Course course = (Course) obj;
+		
+		// comparing state of obj to 'this' obj
+		return (course.title.equals(this.title));
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.title.hashCode();
 	}
 }

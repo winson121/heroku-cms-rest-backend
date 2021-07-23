@@ -1,6 +1,6 @@
 package com.springcms.backendrestapi.service;
 
-import java.util.List;
+import java.util.Collection;
 
 import javax.transaction.Transactional;
 
@@ -19,13 +19,13 @@ public class CourseServiceImpl implements CourseService{
 	
 	@Override
 	@Transactional
-	public List<Course> getCoursesByUser(String username) {
+	public Collection<Course> getCoursesByUser(String username) {
 		return courseDAO.getCoursesByUser(username);
 	}
 
 	@Override
 	@Transactional
-	public List<Course> getCourses() {
+	public Collection<Course> getCourses() {
 		return courseDAO.getCourses();
 	}
 
@@ -44,13 +44,31 @@ public class CourseServiceImpl implements CourseService{
 	@Override
 	@Transactional
 	public void updateCourseByUser(String username, Course course) {
-		courseDAO.saveCourseByUser(username, course);
+		courseDAO.updateCourseByUser(username, course);
 	}
 
 	@Override
 	@Transactional
 	public void deleteCourse(int courseId) {
 		courseDAO.deleteCourse(courseId);
+	}
+
+	@Override
+	@Transactional
+	public Collection<Course> getCoursesByPage(int pageId, int total) {
+		return courseDAO.getCoursesByPage(pageId, total);
+	}
+
+	@Override
+	@Transactional
+	public Course saveCourseToUser(String username, int courseId) {
+		return courseDAO.saveCourseToUser(username, courseId);
+	}
+
+	@Override
+	@Transactional
+	public Course removeCourseFromUser(String username, int courseId) {
+		return courseDAO.removeCourseFromUser(username, courseId);
 	}
 
 }
