@@ -11,7 +11,7 @@
 	<groupId>com.springcms</groupId>
 	<artifactId>backend-rest-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>backend-rest-api</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<scope>runtime</scope>
+
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
