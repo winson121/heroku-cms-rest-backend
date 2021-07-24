@@ -179,5 +179,39 @@ public class CourseDAOImpl implements CourseDAO{
 		return course;
 	}
 
+	@Override
+	public Collection<Course> getCoursesBySearchString(String searchString, String colName) {
+		// get current hibernate session
+		Session currentSession =  entityManager.unwrap(Session.class);
+		
+		Query<Course> query;
+        // only search by title if the searchTitle is not empty
+        if (searchString != null && searchString.trim().length() > 0) {
+            // search for title case insensitive
+            query = getHibernateQuery(currentSession, searchString, colName);
+        }
+        else {
+            // searchTitle is empty, just get all the courses
+            query = currentSession.createQuery("from Course", Course.class);            
+        }
+        
+    
+        // execute query and get result list
+        Collection<Course> courses = query.getResultList();
+		return courses;
+	}
+	
+	private Query<Course> getHibernateQuery(Session currentSession, String queryString, String queriedCol) {
+		Query<Course> query = null;
+		if (queriedCol.equals("title")) {
+			query = currentSession.createQuery("from Course where lower("+queriedCol+") like :" + queriedCol, Course.class);
+            query.setParameter(queriedCol, "%" + queryString.toLowerCase() + "%");
+		}
+		else if (queriedCol.equals("teacher")) {
+			query = currentSession.createQuery("select c from Course c inner join c.instructor where lower(c.instructor.firstName) like :queryString or lower(c.instructor.lastName) like :queryString ", Course.class);
+			query.setParameter("queryString", "%" + queryString.toLowerCase() + "%");
+		}
+        return query;
+	}
 
 }

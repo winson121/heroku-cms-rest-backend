@@ -2,6 +2,7 @@ package com.springcms.backendrestapi.service;
 
 import java.util.Collection;
 
+import com.springcms.backendrestapi.dto.Query;
 import com.springcms.backendrestapi.entity.Course;
 
 public interface CourseService {
@@ -23,6 +24,8 @@ public interface CourseService {
 	Course saveCourseToUser(String username, int courseId);
 
 	Course removeCourseFromUser(String username, int courseId);
+
+	Collection<Course> getCoursesBySearchString(Query query);
 
 
 }

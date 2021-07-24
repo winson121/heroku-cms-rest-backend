@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.springcms.backendrestapi.dto.Query;
 import com.springcms.backendrestapi.entity.Course;
 import com.springcms.backendrestapi.exception.CourseNotFoundException;
 import com.springcms.backendrestapi.service.CourseService;
@@ -114,5 +115,17 @@ public class CourseRestController {
 		Course course = courseService.removeCourseFromUser(principal.getName(), courseId);
 		
 		return new ResponseEntity<>(course, HttpStatus.OK);
+	}
+	
+	@PostMapping("/courses/search")
+	public ResponseEntity<Collection<Course>> searchCourse(@RequestBody Query query) {
+		
+		Collection<Course> searchedCourses = courseService.getCoursesBySearchString(query);
+			
+		if (searchedCourses != null) {
+			return new ResponseEntity<>(searchedCourses, HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 	}
 }

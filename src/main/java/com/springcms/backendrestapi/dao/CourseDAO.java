@@ -24,5 +24,7 @@ public interface CourseDAO {
 
 	Course removeCourseFromUser(String username, int courseId);
 
+	Collection<Course> getCoursesBySearchString(String searchString, String colName);
+
 	
 }

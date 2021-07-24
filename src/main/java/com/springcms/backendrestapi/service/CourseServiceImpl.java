@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.springcms.backendrestapi.dao.CourseDAO;
+import com.springcms.backendrestapi.dto.Query;
 import com.springcms.backendrestapi.entity.Course;
 
 @Service
@@ -70,5 +71,12 @@ public class CourseServiceImpl implements CourseService{
 	public Course removeCourseFromUser(String username, int courseId) {
 		return courseDAO.removeCourseFromUser(username, courseId);
 	}
+
+	@Override
+	@Transactional
+	public Collection<Course> getCoursesBySearchString(Query query) {
+		return courseDAO.getCoursesBySearchString(query.getQuery(), query.getColumnName());
+	}
+
 
 }
