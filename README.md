@@ -3,6 +3,7 @@ simple course management system Backend REST api built using springboot with Spr
 
 # Table of Contents
 * [Overview](#overview)
+* [CMS Entity Relationship](#CMS-erd)
 
 <a id="overview" />
 
@@ -12,6 +13,8 @@ The following is the REST API architecture:
 
 
 ![cms-rest-backend](https://user-images.githubusercontent.com/45975038/127633433-d2705d8f-e5ff-49ad-bd31-7e096c24d177.png)
+
+<a id="CMS-erd"/>
 
 ## CMS Entity Relationship
 Following is the ERD for our CMS system, which also includes the user login ERD to determine the role of the user:
