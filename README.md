@@ -14,8 +14,11 @@ The following is the REST API architecture:
 ![cms-rest-backend](https://user-images.githubusercontent.com/45975038/127633433-d2705d8f-e5ff-49ad-bd31-7e096c24d177.png)
 
 ## CMS Entity Relationship
+Following is the ERD for our CMS system, which also includes the user login ERD to determine the role of the user:
 
 ![cms-erd](https://user-images.githubusercontent.com/45975038/127633492-f6e770df-0de8-440f-a16c-3f543ab911b5.png)
+
+The way we design the ERD will affect the way we fetch the data using hibernate. In our Entity Object, we use EAGER Fetch strategy for fetching role attribute in user and instructor attribute for course object since the data to fetch is constant and only consume small amount of RAM when loaded. As for @ManyToMany relationship between courses attribute in user object and users attribute in course object, we use the LAZY fetch strategy. The LAZY Fetch strategy will allow us to only load the course data excluding the related users data so that we don't consume memory resources when we don't need to get the related attribute data. The reason to use lazy fetch stategy is that the amount of the space consume by either courses or users attribute is not constant as a new user may be added to the course's users attribute when a user enrolled to that course or a new course could be created and added to the user's courses attribute when a user created a new course. Learn more on Hibernate Fetch strategy on this [link](https://vladmihalcea.com/hibernate-facts-the-importance-of-fetch-strategy/).
 
 
 
